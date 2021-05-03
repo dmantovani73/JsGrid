@@ -1,5 +1,6 @@
 using Hellang.Middleware.ProblemDetails;
 using JsGrid.Data;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System.Linq;
+using System.Reflection;
 
 // http://js-grid.com/getting-started/
 namespace JsGrid
@@ -35,6 +37,8 @@ namespace JsGrid
                 options.UseSqlite(Configuration.GetConnectionString("(default)")));
 
             services.AddProblemDetails();
+
+            services.AddMediatR(Assembly.GetExecutingAssembly());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -80,9 +84,9 @@ namespace JsGrid
                     });
                 }
 
-                if (!context.Customers.Any())
+                if (!context.Persons.Any())
                 {
-                    context.Customers.AddRange(new[]
+                    context.Persons.AddRange(new[]
                     {
                         new Person { Name = "Otto Clay", Age =  25, CountryId = 1, Address = "Ap #897-1459 Quam Avenue", Married = false },
                         new Person { Name = "Connor Johnston", Age =  45, CountryId = 2, Address = "Ap #370-4647 Dis Av.", Married = true },

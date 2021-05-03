@@ -1,6 +1,8 @@
 ﻿using JsGrid.Data;
+using JsGrid.Services.Persons.Commands;
+using JsGrid.Services.Persons.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,40 +13,57 @@ namespace JsGrid.Controllers
     public class PersonsController : ControllerBase
     {
         readonly JsGridContext _context;
+        readonly IMediator _mediator;
 
-        public PersonsController(JsGridContext context)
+        public PersonsController(JsGridContext context, IMediator mediator)
         {
             _context = context;
+            _mediator = mediator;
         }
 
         [HttpPost]
-        public async Task<ActionResult<Person>> Create(Person customer)
+        public async Task<ActionResult<Person>> Create(Person request)
         {
-            _context.Customers.Add(customer);
-            await _context.SaveChangesAsync();
-
-            return customer;
+            return await _mediator.Send(new CreatePerson
+            {
+                Name = request.Name,
+                Address = request.Address,
+                Age = request.Age,
+                Married = request.Married,
+                CountryId = request.CountryId,
+            });
         }
 
         [HttpGet]
-        public Task<List<Person>> Read() => _context.Customers.ToListAsync();
+        public Task<List<Person>> Read()
+        {
+            return _mediator.Send(new GetAllPersons());
+        }
 
         [HttpPut]
-        public async Task<ActionResult<Person>> Update(Person customer)
+        public async Task<ActionResult<Person>> Update(Person request)
         {
-            _context.Entry(customer).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
-            return customer;
+            return await _mediator.Send(new UpdatePerson
+            {
+                Name = request.Name,
+                Address = request.Address,
+                Age = request.Age,
+                Married = request.Married,
+                CountryId = request.CountryId,
+            });
         }
 
         [HttpDelete]
-        public async Task<ActionResult<Person>> Delete(Person customer)
+        public async Task<ActionResult<Person>> Delete(Person request)
         {
-            _context.Entry(customer).State = EntityState.Deleted;
-            await _context.SaveChangesAsync();
-
-            return customer;
+            return await _mediator.Send(new DeletePerson
+            {
+                Name = request.Name,
+                Address = request.Address,
+                Age = request.Age,
+                Married = request.Married,
+                CountryId = request.CountryId,
+            });
         }
     }
 }

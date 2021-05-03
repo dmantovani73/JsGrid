@@ -17,6 +17,6 @@ namespace JsGrid.Data
 
         public DbSet<Country> Countries { get; set; }
 
-        public DbSet<Person> Customers { get; set; }
+        public DbSet<Person> Persons { get; set; }
     }
 }
