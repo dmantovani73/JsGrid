@@ -1,4 +1,5 @@
-﻿using JsGrid.Data;
+﻿using AutoMapper;
+using JsGrid.Data;
 using JsGrid.Services.Persons.Commands;
 using JsGrid.Services.Persons.Queries;
 using MediatR;
@@ -12,26 +13,19 @@ namespace JsGrid.Controllers
     [ApiController]
     public class PersonsController : ControllerBase
     {
-        readonly JsGridContext _context;
         readonly IMediator _mediator;
+        readonly IMapper _mapper;
 
-        public PersonsController(JsGridContext context, IMediator mediator)
+        public PersonsController(IMediator mediator, IMapper mapper)
         {
-            _context = context;
             _mediator = mediator;
+            _mapper = mapper;
         }
 
         [HttpPost]
         public async Task<ActionResult<Person>> Create(Person request)
         {
-            return await _mediator.Send(new CreatePerson
-            {
-                Name = request.Name,
-                Address = request.Address,
-                Age = request.Age,
-                Married = request.Married,
-                CountryId = request.CountryId,
-            });
+            return await _mediator.Send(_mapper.Map<CreatePerson>(request));
         }
 
         [HttpGet]
@@ -43,27 +37,13 @@ namespace JsGrid.Controllers
         [HttpPut]
         public async Task<ActionResult<Person>> Update(Person request)
         {
-            return await _mediator.Send(new UpdatePerson
-            {
-                Name = request.Name,
-                Address = request.Address,
-                Age = request.Age,
-                Married = request.Married,
-                CountryId = request.CountryId,
-            });
+            return await _mediator.Send(_mapper.Map<UpdatePerson>(request));
         }
 
         [HttpDelete]
         public async Task<ActionResult<Person>> Delete(Person request)
         {
-            return await _mediator.Send(new DeletePerson
-            {
-                Name = request.Name,
-                Address = request.Address,
-                Age = request.Age,
-                Married = request.Married,
-                CountryId = request.CountryId,
-            });
+            return await _mediator.Send(_mapper.Map<DeletePerson>(request));
         }
     }
 }
