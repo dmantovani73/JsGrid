@@ -1,0 +1,74 @@
+﻿@page
+@model JsGrid.Pages.IndexModel
+
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+    <style>
+
+        * {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="jsGrid"></div>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+    <script>
+        $(function () {
+            const url = "/api/persons";
+
+            let ajax = function (item, verb, json = true) {
+                return $.ajax({
+                    type: verb,
+                    url: url,
+                    data: json ? JSON.stringify(item) : item,
+                    dataType: "json",
+                    contentType: json ? "application/json" : "text/plain",
+                });
+            }
+
+            $("#jsGrid").jsGrid({
+                height: "90%",
+                width: "100%",
+
+                filtering: true,
+                inserting: true,
+                editing: true,
+                sorting: true,
+                paging: true,
+                autoload: true,
+
+                pageSize: 15,
+                pageButtonCount: 5,
+
+                deleteConfirm: "Do you really want to delete the item?",
+
+                controller: {
+                    loadData: filter => ajax(filter, "GET", json = false),
+                    insertItem: item => ajax(item, "POST"),
+                    updateItem: item => ajax(item, "PUT"),
+                    deleteItem: item => ajax(item, "DELETE"),
+                },
+
+                fields: [
+                    { name: "name", type: "text", width: 150, title: "Name" },
+                    { name: "age", type: "number", width: 50, title: "Age" },
+                    { name: "address", type: "text", width: 200, title: "Address" },
+                    { name: "countryId", type: "select", items: @(Html.Raw(Json.Serialize(Model.Countries))), valueField: "id", textField: "name" },
+                    { name: "married", type: "checkbox", title: "Is Married", sorting: false },
+                    { type: "control" }
+                ]
+            });
+
+        });
+    </script>
+</body>
+</html>
