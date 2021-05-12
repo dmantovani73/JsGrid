@@ -1,4 +1,6 @@
 using JsGrid.Data;
+using JsGrid.Services.Countries.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -8,18 +10,18 @@ namespace JsGrid.Pages
 {
     public class IndexModel : PageModel
     {
-        readonly JsGridContext _context;
+        readonly IMediator _mediator;
 
-        public IndexModel(JsGridContext context)
+        public IndexModel(IMediator mediator)
         {
-            _context = context;
+            _mediator = mediator;
         }
 
         public IEnumerable<Country> Countries { get; set; }
 
         public async Task OnGet()
         {
-            Countries = await _context.Countries.ToListAsync();
+            Countries = await _mediator.Send(new GetAllCountries());
         }
     }
 }
